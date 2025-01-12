@@ -96,7 +96,7 @@ module Prompts
     # The a prompt that selects domains to narrow the search will also be helpful. 
     # This is useful because autonomous browsing of web pages quickly leads to low-quality sources or services that require logging in or blocking access to content.
     # Therefore, it is worth listing addresses and describing them so that LLM can decide when to include them and when not to. 
-    def pick_domains_to_user_query(resources:)
+    def pick_domains_for_user_query(resources:)
       <<~PROMPT
         From now on, focus on generating concise, keyword-based queries optimized for web search.
 
@@ -122,7 +122,7 @@ module Prompts
         </rules>
 
         <available_domains>
-        #{resources.map { |resource| "#{resource[:name]}: #{resource[:url]}" }.join("\n")}
+        #{resources.map { |resource| "#{resource[:url]}: #{resource[:description]}" }.join("\n")}
         </available_domains>
 
         <examples>

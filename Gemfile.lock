@@ -28,6 +28,7 @@ PLATFORMS
 
 DEPENDENCIES
   dotenv
+  faraday (~> 2.12)
   ruby-openai
 
 BUNDLED WITH

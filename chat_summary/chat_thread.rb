@@ -2,7 +2,7 @@ require_relative "../services/openai_service"
 
 class ChatThread
   def initialize
-    @openai_service = OpenAIService.new
+    @openai_service = Services::OpenAIService.new
     @previous_summary  = nil
   end
 
