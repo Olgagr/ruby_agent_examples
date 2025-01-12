@@ -80,6 +80,39 @@ module Services
       end
     end
 
+    def score_search_results(user_message:, search_results:)
+      scored_results = search_results.map do |result|
+        system_message = {
+          role: 'system',
+          content: rate_search_results
+        }
+        user_message = {
+          role: 'user',
+          content: <<~CONTENT
+            <context>
+              Resource: #{result.url}
+              Snippet: #{result.description}
+            </context>
+            <query>
+              #{user_message}
+            </query>
+          CONTENT
+        }
+
+        response = openai.complete(messages: [system_message, user_message], model: 'gpt-4o-mini')
+        if (response_message = response.dig('choices', 0, 'message', 'content'))
+          {**result, score: response_message['score']}
+        else
+          {**result, score: 0}
+        end
+
+        sorted_results = scored_results.sort { |a, b| b[:score] <=> a[:score] }
+        higest_scored_results = sorted_results[0, 2]
+
+        debug_step(step_name: "higest_scored_results", step_description: higest_scored_results)
+      end
+    end
+
     private
 
     def debug_step(step_name:, step_description:)

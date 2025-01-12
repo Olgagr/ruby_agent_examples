@@ -23,11 +23,30 @@ if __FILE__ == $PROGRAM_NAME
     if is_websearch_needed
       # pick domains and generate queries that match user prompt
       generated_queries = websearch_service.generate_queries(user_message:)
+
       if generated_queries.size > 0
         # 1. Take a generated query
         # 2. Search it on the selected website
         # 3. Returned scrapped website that matches the query
+        # {
+        #   url:
+        #   title:
+        #   description:
+        #   markdown
+        # }[]
         search_results = websearch_service.web_search(queries: generated_queries, limit: 1)
+        
+        # Takes search results, scores their relevance and returns 2 the highest best results for each URL
+        # {
+        #   url:
+        #   title:
+        #   description:
+        #   markdown:
+        #   score:
+        # }[]
+        scored_search_results = web_search.score_search_results(user_message:, search_results:)
+        
+        
       end
     end
   # end
