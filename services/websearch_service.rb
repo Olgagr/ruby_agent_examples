@@ -21,10 +21,10 @@ module Services
       @debug_mode = debug_mode
     end
 
-    def websearch_needed?(user_message:)
+    def websearch_needed?(user_question:)
       messages = [
         { role: 'system', content: use_websearch },
-        { role: 'user', content: user_message }
+        { role: 'user', content: user_question }
       ]
       response = openai_service.complete(messages:, model: 'gpt-4o')
       response_message = response.dig("choices", 0, "message", "content")
@@ -34,10 +34,10 @@ module Services
       response_message.to_i == 1
     end
 
-    def generate_queries(user_message:)
+    def generate_queries(user_question:)
       messages = [
         { role: "system", content: pick_domains_for_user_query(resources: allowed_domains) },
-        { role: "user", content: user_message }
+        { role: "user", content: user_question }
       ]
       response = openai_service.complete(messages:, model: 'gpt-4o')
       response_message = JSON.parse(response.dig("choices", 0, "message", "content"))
@@ -80,7 +80,7 @@ module Services
       end
     end
 
-    def score_search_results(user_message:, search_results:)
+    def score_search_results(user_question:, search_results:)
       scored_results = search_results.map do |result|
         system_message = {
           role: 'system',
@@ -94,23 +94,39 @@ module Services
               Snippet: #{result.description}
             </context>
             <query>
-              #{user_message}
+              #{user_question}
             </query>
           CONTENT
         }
 
-        response = openai.complete(messages: [system_message, user_message], model: 'gpt-4o-mini')
+        response = openai_service.complete(messages: [system_message, user_message])
         if (response_message = response.dig('choices', 0, 'message', 'content'))
           {**result, score: response_message['score']}
         else
           {**result, score: 0}
         end
-
-        sorted_results = scored_results.sort { |a, b| b[:score] <=> a[:score] }
-        higest_scored_results = sorted_results[0, 2]
-
-        debug_step(step_name: "higest_scored_results", step_description: higest_scored_results)
       end
+
+      sorted_results = scored_results.sort { |a, b| b[:score] <=> a[:score] }
+      higest_scored_results = sorted_results[0, 2]
+
+      debug_step(step_name: "higest_scored_results", step_description: higest_scored_results)
+
+      higest_scored_results
+    end
+
+    def answer_question(search_results:, user_question:)
+      system_message = {
+        role: 'system',
+        content: answer_user_question(websearch_results: search_results)
+      }
+      user_message = {
+        role: 'user',
+        content: user_question
+      }
+
+      response = openai_service.complete(messages: [system_message, user_message])
+      response.dig('choices', 0, 'message', 'content')
     end
 
     private

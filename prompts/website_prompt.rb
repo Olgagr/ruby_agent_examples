@@ -421,5 +421,30 @@ module Prompts
         Analyze the original query and filtered resources, then return the JSON structure with selected URLs.
       PROMPT
     end
+
+    # {
+    #   url:
+    #   title:
+    #   description:
+    #   markdown:
+    #   score:
+    # }[]
+    #
+    def answer_user_question(websearch_results:)
+      results_message = <<~RESULTS
+        <search_results>
+          #{websearch_results.map { |r| "<search_result url='#{r['url']}' title='#{r['title']}' description='#{r['description']}'>#{r['markdown']}</search_result>\n" }}
+        </search_results>
+
+        Answer using the most relevant fragments, using markdown formatting, including links and highlights.
+        Make sure to don't mismatch the links and the results.
+      RESULTS
+
+      <<~PROMPT
+        Answer the question based on the #{websearch_results.empty? ? "your existing knowledge" : "provided search results and scraped content"}
+        #{websearch_results.empty? ? "Provide a concise answer based on your existing knowledge, using markdown formatting where appropriate. Remember, web browsing is available for whitelisted domains. While no search results are currently available for this query, you can perform web searches as needed. If the user asks for web searches and results are not provided, it may indicate that the domain isn't whitelisted or the content couldn't be fetched due to system limitations. In such cases, inform the user about these constraints." : results_message}
+        
+      PROMPT
+    end
   end
 end

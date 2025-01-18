@@ -16,13 +16,13 @@ if __FILE__ == $PROGRAM_NAME
   # loop do
     puts "How can I help you today? (type 'exit' to quit)"
 
-    user_message = gets.chomp
+    user_question = gets.chomp
     # do we need to websearch to respond user prompt or can model use it's inner knowledge
-    is_websearch_needed = websearch_service.websearch_needed?(user_message:)
+    is_websearch_needed = websearch_service.websearch_needed?(user_question:)
 
     if is_websearch_needed
       # pick domains and generate queries that match user prompt
-      generated_queries = websearch_service.generate_queries(user_message:)
+      generated_queries = websearch_service.generate_queries(user_question:)
 
       if generated_queries.size > 0
         # 1. Take a generated query
@@ -44,9 +44,10 @@ if __FILE__ == $PROGRAM_NAME
         #   markdown:
         #   score:
         # }[]
-        scored_search_results = web_search.score_search_results(user_message:, search_results:)
+        scored_search_results = websearch_service.score_search_results(user_question:, search_results:)
+        answer = websearch_service.answer_question(search_results: scored_search_results)
         
-        
+        puts answer
       end
     end
   # end
