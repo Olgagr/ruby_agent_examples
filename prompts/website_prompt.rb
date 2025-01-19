@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Prompts
-  module WebsitePrompt
+  # This module contains prompts for websearch service
+  module WebsitePrompt # rubocop:disable Metrics/ModuleLength
     # This method is an example of prompt when model needs to decide to use web search or not.
     # It uses few-shots technique (examples)
     def use_websearch
@@ -93,9 +96,9 @@ module Prompts
       PROMPT
     end
 
-    # The a prompt that selects domains to narrow the search will also be helpful. 
+    # The a prompt that selects domains to narrow the search will also be helpful.
     # This is useful because autonomous browsing of web pages quickly leads to low-quality sources or services that require logging in or blocking access to content.
-    # Therefore, it is worth listing addresses and describing them so that LLM can decide when to include them and when not to. 
+    # Therefore, it is worth listing addresses and describing them so that LLM can decide when to include them and when not to.
     def pick_domains_for_user_query(resources:)
       <<~PROMPT
         From now on, focus on generating concise, keyword-based queries optimized for web search.
@@ -228,7 +231,7 @@ module Prompts
       PROMPT
     end
 
-    # The evaluation prompt assesses whether the returned result might contain information of interest to us. 
+    # The evaluation prompt assesses whether the returned result might contain information of interest to us.
     # Based on the returned evaluations, we will select the pages whose content we want to load using, for example, Firecrawl.
     def rate_search_results
       <<~PROMPT
@@ -256,7 +259,7 @@ module Prompts
         </snippet_rules>
 
         <snippet_examples>
-        USER: 
+        USER:#{' '}
         <context>
         Resource: https://en.wikipedia.org/wiki/Eiffel_Tower
         Snippet: The Eiffel Tower was the world's tallest structure when completed in 1889, a distinction it retained until 1929 when the Chrysler Building in New York City was topped out. [101] The tower also lost its standing as the world's tallest tower to the Tokyo Tower in 1958 but retains its status as the tallest freestanding (non-guyed) structure in France.
@@ -268,7 +271,7 @@ module Prompts
           "reason": "Snippet mentions 'Eiffel Tower' from query. While height not in snippet, Wikipedia page likely contains 'tall' or height information",
           "score": 0.9
         }
-        USER: 
+        USER:#{' '}
         <context>
         Resource: https://brain.overment.com
         Snippet: My values are crucial to me and I am very careful about them.
@@ -353,9 +356,9 @@ module Prompts
         </rules>
 
         <examples>
-        USER: 
+        USER:#{' '}
         Original query: "How tall is the Eiffel Tower?"
-        Filtered resources: 
+        Filtered resources:#{' '}
         [
           "https://www.toureiffel.paris/en/the-monument/key-figures",
           "https://en.wikipedia.org/wiki/Eiffel_Tower",
@@ -441,9 +444,8 @@ module Prompts
       RESULTS
 
       <<~PROMPT
-        Answer the question based on the #{websearch_results.empty? ? "your existing knowledge" : "provided search results and scraped content"}
+        Answer the question based on the #{websearch_results.empty? ? 'your existing knowledge' : 'provided search results and scraped content'}
         #{websearch_results.empty? ? "Provide a concise answer based on your existing knowledge, using markdown formatting where appropriate. Remember, web browsing is available for whitelisted domains. While no search results are currently available for this query, you can perform web searches as needed. If the user asks for web searches and results are not provided, it may indicate that the domain isn't whitelisted or the content couldn't be fetched due to system limitations. In such cases, inform the user about these constraints." : results_message}
-        
       PROMPT
     end
   end
