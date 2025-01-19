@@ -13,6 +13,9 @@ GEM
       net-http (>= 0.5.0)
     json (2.9.1)
     logger (1.6.4)
+    minitest (5.25.4)
+    mocha (2.7.1)
+      ruby2_keywords (>= 0.0.5)
     multipart-post (2.4.1)
     net-http (0.6.0)
       uri
@@ -20,6 +23,7 @@ GEM
       event_stream_parser (>= 0.3.0, < 2.0.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
+    ruby2_keywords (0.0.5)
     uri (1.0.2)
 
 PLATFORMS
@@ -29,6 +33,8 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   faraday (~> 2.12)
+  minitest
+  mocha
   ruby-openai
 
 BUNDLED WITH

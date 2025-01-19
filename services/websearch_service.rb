@@ -90,8 +90,8 @@ module Services
           role: 'user',
           content: <<~CONTENT
             <context>
-              Resource: #{result.url}
-              Snippet: #{result.description}
+              Resource: #{result['url']}
+              Snippet: #{result['description']}
             </context>
             <query>
               #{user_question}
