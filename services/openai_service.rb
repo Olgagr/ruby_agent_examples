@@ -1,35 +1,36 @@
 # frozen_string_literal: true
 
-require "openai"
-require "dotenv"
+require 'openai'
+require 'dotenv'
 
 Dotenv.load
 
 module Services
+  # This class is responsible for interacting with the OpenAI API
   class OpenAIService
     def initialize
       @client = OpenAI::Client.new(
-        access_token: ENV["OPENAI_API_KEY"],
+        access_token: ENV['OPENAI_API_KEY'],
         log_errors: true
       )
     end
 
-    def complete(model: 'gpt-4o-mini', messages:, temperature: 0.5, stream: nil)
+    def complete(messages:, model: 'gpt-4o-mini', temperature: 0.5, stream: nil)
       @client.chat(parameters: {
-        model: model,
-        messages: messages,
-        temperature: temperature,
-        stream: stream
-      })
+                     model: model,
+                     messages: messages,
+                     temperature: temperature,
+                     stream: stream
+                   })
     end
 
-    def generate_summarization(previous_summary:, user_message:, assistant_response:)
+    def generate_summarization(previous_summary:, user_message:, assistant_response:) # rubocop:disable Metrics/MethodLength
       system_message = {
         role: 'system',
         content: <<~CONTENT
           Please summarize the following conversation in a concise manner, incorporating the previous summary if available:
           <previous_summary>
-            #{previous_summary ? previous_summary : "No previous summary."}
+            #{previous_summary || 'No previous summary.'}
           </previous_summary>
           <current_turn>
             USER: #{user_message}
@@ -39,6 +40,15 @@ module Services
       }
 
       complete(model: 'gpt-4o-mini', messages: [system_message])
+    end
+
+    def create_embedding(text:, model: 'text-embedding-3-large')
+      response = @client.embeddings(parameters: {
+                                      model: model,
+                                      input: text
+                                    })
+
+      response.dig('data', 0, 'embedding')
     end
   end
 end
