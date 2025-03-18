@@ -1,20 +1,27 @@
-require_relative "../services/openai_service"
+# frozen_string_literal: true
+
+require 'securerandom'
+require_relative '../services/openai_service'
 
 class ChatThread
+
   def initialize
     @openai_service = Services::OpenAIService.new
-    @previous_summary  = nil
+    @openai_service.trace_session(session_id: "chat_thread #{SecureRandom.uuid}")
+    @previous_summary = nil
   end
 
   def chat(user_message)
     system_prompt = generate_system_prompt
-    response = @openai_service.complete(messages: [
-      system_prompt,
-      {
-        role: "user",
-        content: user_message
-      }
-    ])
+    response = @openai_service.complete(
+      messages: [
+        system_prompt,
+        {
+          role: "user",
+          content: user_message
+        }
+      ]
+    )
 
     summary_response = @openai_service.generate_summarization(
       previous_summary: @previous_summary,

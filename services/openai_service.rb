@@ -11,8 +11,23 @@ module Services
     def initialize
       @client = OpenAI::Client.new(
         access_token: ENV['OPENAI_API_KEY'],
-        log_errors: true
+        uri_base: 'https://oai.helicone.ai/v1',
+        log_errors: true,
+        request_timeout: 240,
+        extra_headers: {
+          'X-Proxy-TTL' => '43200',
+          'X-Proxy-Refresh' => 'true',
+          'Helicone-Auth' => "Bearer #{ENV['HELICONE_API_KEY']}",
+          'helicone-stream-force-format' => 'true'
+        }
       )
+    end
+
+    def trace_session(session_id:, session_name: nil, session_path: nil)
+      headers = { 'Helicone-Session-Id' => session_id }
+      headers['Helicone-Session-Name'] = session_name if session_name
+      headers['Helicone-Session-Path'] = session_path if session_path
+      @client.add_headers(headers)
     end
 
     def complete(messages:, model: 'gpt-4o-mini', temperature: 0.5, stream: nil)
