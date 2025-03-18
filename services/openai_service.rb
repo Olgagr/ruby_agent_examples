@@ -30,6 +30,10 @@ module Services
       @client.add_headers(headers)
     end
 
+    def rough_token_count(message:)
+      OpenAI.rough_token_count(message)
+    end
+
     def complete(messages:, model: 'gpt-4o-mini', temperature: 0.5, stream: nil)
       @client.chat(parameters: {
                      model: model,
