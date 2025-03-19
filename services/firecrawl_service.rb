@@ -9,8 +9,8 @@ module Services
       Faraday.new(
         url: "https://api.firecrawl.dev/v1",
         headers: {
-          'Content-Type' => 'application/json', 
-          "Authorization" => "Bearer #{ENV["FIRECRAWL_API_KEY"]}"
+          "Content-Type" => "application/json",
+          "Authorization" => "Bearer #{ENV['FIRECRAWL_API_KEY']}"
         }
       ) do |faraday|
         faraday.response :raise_error
