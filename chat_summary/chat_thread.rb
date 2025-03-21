@@ -7,7 +7,6 @@ class ChatThread
 
   def initialize
     @openai_service = Services::OpenAIService.new
-    @openai_service.trace_session(session_id: "chat_thread #{SecureRandom.uuid}")
     @previous_summary = nil
   end
 
@@ -49,6 +48,6 @@ class ChatThread
         #{previous_summary}
         Let's chat
       CONTENT
-    } 
+    }
   end
 end

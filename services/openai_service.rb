@@ -11,24 +11,16 @@ module Services
     def initialize
       @client = OpenAI::Client.new(
         access_token: ENV['OPENAI_API_KEY'],
-        uri_base: 'https://oai.helicone.ai/v1',
-        log_errors: true,
-        request_timeout: 240,
-        extra_headers: {
-          'X-Proxy-TTL' => '43200',
-          'X-Proxy-Refresh' => 'true',
-          'Helicone-Auth' => "Bearer #{ENV['HELICONE_API_KEY']}",
-          'helicone-stream-force-format' => 'true'
-        }
+        log_errors: true
       )
     end
 
-    def trace_session(session_id:, session_name: nil, session_path: nil)
-      headers = { 'Helicone-Session-Id' => session_id }
-      headers['Helicone-Session-Name'] = session_name if session_name
-      headers['Helicone-Session-Path'] = session_path if session_path
-      @client.add_headers(headers)
-    end
+    # def trace_session(session_id:, session_name: nil, session_path: nil)
+    #   headers = { 'Helicone-Session-Id' => session_id }
+    #   headers['Helicone-Session-Name'] = session_name if session_name
+    #   headers['Helicone-Session-Path'] = session_path if session_path
+    #   @client.add_headers(headers)
+    # end
 
     def rough_token_count(message:)
       OpenAI.rough_token_count(message)
