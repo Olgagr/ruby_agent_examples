@@ -14,3 +14,5 @@ end
 group :development do
   gem 'rubocop'
 end
+
+gem "qdrant-ruby", "~> 0.9.8"
