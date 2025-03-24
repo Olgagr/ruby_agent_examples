@@ -15,13 +15,6 @@ module Services
       )
     end
 
-    # def trace_session(session_id:, session_name: nil, session_path: nil)
-    #   headers = { 'Helicone-Session-Id' => session_id }
-    #   headers['Helicone-Session-Name'] = session_name if session_name
-    #   headers['Helicone-Session-Path'] = session_path if session_path
-    #   @client.add_headers(headers)
-    # end
-
     def rough_token_count(message:)
       OpenAI.rough_token_count(message)
     end
