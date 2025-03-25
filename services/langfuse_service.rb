@@ -1,12 +1,24 @@
 # frozen_string_literal: true
 
-require_relative "langfuse/trace"
-require_relative "langfuse/prompt"
+require "dotenv"
+
+Dotenv.load
+
+require_relative "langfuse/client"
+
 module Services
   class LangfuseService
+    attr_reader :client
+
+    def initialize
+      @client = Services::Langfuse::Client.new(
+        api_key: ENV["LANGFUSE_PUBLIC_API_KEY"],
+        secret_key: ENV["LANGFUSE_SECRET_API_KEY"]
+      )
+    end
+
     def trace_create(**kwargs)
-      trace = Services::Langfuse::Trace.new
-      trace.create(**kwargs)
+      client.trace.create(**kwargs)
     end
 
     def trace_update(trace:, **kwargs)
@@ -14,13 +26,11 @@ module Services
     end
 
     def prompt_fetch(**kwargs)
-      prompt = Services::Langfuse::Prompt.new
-      prompt.fetch_prompt(**kwargs)
+      client.prompts.fetch_prompt(**kwargs)
     end
 
     def prompts_fetch(**kwargs)
-      prompt = Services::Langfuse::Prompt.new
-      prompt.fetch_prompts(**kwargs)
+      client.prompts.fetch_prompts(**kwargs)
     end
   end
 end

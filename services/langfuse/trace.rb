@@ -9,8 +9,8 @@ module Services
     class Trace < Base
       attr_accessor :body_params, :trace_id
 
-      def initialize
-        super
+      def initialize(client:)
+        super(client: client)
         @trace_id = SecureRandom.uuid
       end
 
@@ -31,7 +31,7 @@ module Services
           }]
         }
 
-        connection.post("ingestion", payload.to_json)
+        client.connection.post("ingestion", payload.to_json)
         self
       end
 
