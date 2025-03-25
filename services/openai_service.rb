@@ -11,6 +11,8 @@ module Services
     IMAGE_MAX_DIMENSION = 2048
     IMAGE_SCALE_SIZE = 768
 
+    attr_reader :client
+
     def initialize
       @client = OpenAI::Client.new(
         access_token: ENV["OPENAI_API_KEY"],
@@ -23,12 +25,12 @@ module Services
     end
 
     def complete(messages:, model: "gpt-4o-mini", temperature: 0.5, stream: nil)
-      @client.chat(parameters: {
-                     model: model,
-                     messages: messages,
-                     temperature: temperature,
-                     stream: stream
-                   })
+      client.chat(parameters: {
+                    model: model,
+                    messages: messages,
+                    temperature: temperature,
+                    stream: stream
+                  })
     end
 
     def generate_summarization(previous_summary:, user_message:, assistant_response:) # rubocop:disable Metrics/MethodLength
@@ -50,16 +52,18 @@ module Services
     end
 
     def create_embedding(text:, model: "text-embedding-3-large")
-      response = @client.embeddings(parameters: {
-                                      model: model,
-                                      input: text
-                                    })
+      response = client.embeddings(
+        parameters: {
+          model: model,
+          input: text
+        }
+      )
 
       response.dig("data", 0, "embedding")
     end
 
     def transcribe(file_path:, language: "en")
-      response = @client.audio.transcribe(
+      response = client.audio.transcribe(
         parameters: {
           file: File.open(file_path, "rb"),
           model: "whisper-1",
@@ -68,6 +72,19 @@ module Services
       )
 
       response["text"]
+    end
+
+    def generate_image(prompt:, size: "1024x1024", model: "dall-e-3", quality: "standard")
+      response = client.images.generate(
+        parameters: {
+          prompt: prompt,
+          size: size,
+          model: model,
+          quality: quality
+        }
+      )
+
+      response["data"].first["url"]
     end
 
     def calculate_image_tokens(width, height, detail)
