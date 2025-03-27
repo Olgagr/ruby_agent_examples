@@ -32,5 +32,13 @@ module Services
     def prompts_fetch(**kwargs)
       client.prompts.fetch_prompts(**kwargs)
     end
+
+    def observation_create(**kwargs)
+      client.observation.create(**kwargs)
+    end
+
+    def observation_update(observation:, **kwargs)
+      observation.update(**kwargs)
+    end
   end
 end

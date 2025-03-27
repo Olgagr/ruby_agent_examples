@@ -7,11 +7,11 @@ require_relative "base"
 module Services
   module Langfuse
     class Trace < Base
-      attr_accessor :body_params, :trace_id
+      attr_accessor :body_params, :id
 
       def initialize(client:)
         super(client: client)
-        @trace_id = SecureRandom.uuid
+        @id = SecureRandom.uuid
       end
 
       def create(**kwargs)
@@ -20,12 +20,12 @@ module Services
 
         payload = {
           batch: [{
-            id: trace_id,
+            id: id,
             type: "trace-create",
             timestamp: timestamp,
             body: {
               **body_params,
-              id: trace_id,
+              id: id,
               timestamp: timestamp
             }
           }]

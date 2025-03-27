@@ -5,7 +5,7 @@ require "base64"
 
 require_relative "trace"
 require_relative "prompt"
-
+require_relative "observation"
 module Services
   module Langfuse
     class Client
@@ -37,6 +37,10 @@ module Services
 
       def prompts
         @prompts ||= Services::Langfuse::Prompt.new(client: self)
+      end
+
+      def observation
+        Services::Langfuse::Observation.new(client: self)
       end
     end
   end
