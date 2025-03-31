@@ -6,8 +6,8 @@ This script is an example how you can use LLMs to prepare fine-tuned summary of 
 
 - User passes the link to the article.
 - We download an article in the markdown format.
-- We do couple of rounds to the LLM to prepare the final, refined summary.
 - First we extract key takeaways, links, context, main topic etc. and we save these extracted data into files, in case we are interested in that.
+- Next we extract all images and prepare their visual descriptions and their context description.
 - We ask LLM to create a draf summary.
 - Next we ask LLM to prepare a critique based of the draft base on original article.
 - In the last step, we ask to prepare the final summary based on previous steps.

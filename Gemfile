@@ -6,6 +6,8 @@ gem 'dotenv'
 gem 'faraday', '~> 2.12'
 gem 'ruby-openai'
 gem 'rubyzip'
+gem "qdrant-ruby", "~> 0.9.8"
+gem "base64"
 
 group :test do
   gem 'minitest'
@@ -16,4 +18,3 @@ group :development do
   gem 'rubocop'
 end
 
-gem "qdrant-ruby", "~> 0.9.8"

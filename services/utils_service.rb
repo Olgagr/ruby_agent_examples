@@ -2,9 +2,11 @@
 
 require "faraday"
 require "zip"
-
+require "base64"
 module Services
   module UtilsService
+    class ImageFetchError < StandardError; end
+
     def self.fetch_and_unzip(url:, destination:)
       # Download the file using Faraday
       response = Faraday.get(url) do |req|

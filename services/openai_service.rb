@@ -24,7 +24,7 @@ module Services
       OpenAI.rough_token_count(message)
     end
 
-    def complete(messages:, model: "gpt-4o-mini", temperature: 0.5, stream: nil)
+    def complete(messages:, model: "gpt-4o-mini", temperature: 0.5, stream: false)
       client.chat(parameters: {
                     model: model,
                     messages: messages,
